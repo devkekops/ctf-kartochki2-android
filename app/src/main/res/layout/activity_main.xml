@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/verticalLinear1"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp">
+        <TextView
+            android:id="@+id/labelView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Переведите на русский"
+            android:textSize="32dp"
+            />
+        <TextView
+            android:id="@+id/statusView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Слово 1/7"
+            android:textSize="25dp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/verticalLinear2"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp"
+        android:layout_below="@id/verticalLinear1">
+        <TextView
+            android:id="@+id/wordView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="chica"
+            android:textSize="25dp"
+            />
+        <EditText
+            android:id="@+id/inputText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:textSize="25dp"
+            />
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"
+        app:backgroundTint="@null"
+        android:background="@drawable/bg"
+        android:text="Проверить"
+        android:textSize="25dp"
+        android:textColor="#ffffff"
+        />
+
+</RelativeLayout>
