@@ -71,12 +71,11 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<WordList>() {
             @Override
             public void onResponse(Call<WordList> call, Response<WordList> response) {
-
                 WordList wordList = response.body();
                 List<WordList.Word> words = wordList.words;
 
                 for (WordList.Word word : words) {
-                    Toast.makeText(getApplicationContext(), "esp : " + word.esp + " rus: " + word.rus, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "esp : " + word.esp + " rus: " + word.rus, Toast.LENGTH_LONG).show();
                 }
             }
 

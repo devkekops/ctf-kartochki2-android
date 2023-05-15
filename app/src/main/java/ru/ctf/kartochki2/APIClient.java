@@ -9,19 +9,15 @@ public class APIClient {
     private static Retrofit retrofit = null;
 
     static Retrofit getClient() {
-
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
-
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://127.0.0.1")
+                .baseUrl("http://10.0.2.2")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();
-
-
 
         return retrofit;
     }
