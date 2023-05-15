@@ -15,6 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import ru.ctf.kartochki2.pojo.WordList;
 
 public class MainActivity extends AppCompatActivity {
     TextView labelView;
@@ -25,11 +31,14 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Pair<String, String>> espRus = new ArrayList<Pair<String, String>>();
     int counter = 0;
     int wordCount = 0;
+    APIInterface apiInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        apiInterface = APIClient.getClient().create(APIInterface.class);
 
         espRus.add(new Pair<String, String>("chica", "девушка"));
         espRus.add(new Pair<String, String>("padre", "отец"));
@@ -54,7 +63,30 @@ public class MainActivity extends AppCompatActivity {
                 check();
             }
         });
+
+        /**
+         GET List Users
+         **/
+        Call<WordList> call = apiInterface.doGetWords();
+        call.enqueue(new Callback<WordList>() {
+            @Override
+            public void onResponse(Call<WordList> call, Response<WordList> response) {
+
+                WordList wordList = response.body();
+                List<WordList.Word> words = wordList.words;
+
+                for (WordList.Word word : words) {
+                    Toast.makeText(getApplicationContext(), "esp : " + word.esp + " rus: " + word.rus, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WordList> call, Throwable t) {
+                call.cancel();
+            }
+        });
     }
+
 
     private void check() {
         if (inputText.getText().toString().equals(espRus.get(counter).second)) {
