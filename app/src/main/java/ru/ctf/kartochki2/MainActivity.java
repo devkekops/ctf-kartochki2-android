@@ -1,6 +1,7 @@
 package ru.ctf.kartochki2;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     List<Word> espRus;
     int counter = 0;
     int wordCount = 0;
+    Boolean paid = false;
     APIInterface apiInterface;
 
     @Override
@@ -38,29 +40,52 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        apiInterface = APIClient.getClient().create(APIInterface.class);
         labelView = (TextView)findViewById(R.id.labelView);
         statusView = (TextView)findViewById(R.id.statusView);
         wordView = (TextView)findViewById(R.id.wordView);
         inputText = (EditText)findViewById(R.id.inputText);
         button = (Button)findViewById(R.id.button);
 
-        /**
-         GET List Words
-         **/
-        Call<List<Word>> call = apiInterface.doGetWords();
-        call.enqueue(new Callback<List<Word>>() {
+        apiInterface = APIClient.getClient().create(APIInterface.class);
+
+        Call<List<Word>> call1 = apiInterface.doGetPaidWords();
+        call1.enqueue(new Callback<List<Word>>() {
             @Override
             public void onResponse(Call<List<Word>> call, Response<List<Word>> response) {
-                espRus = response.body();
-                wordCount = espRus.size();
+                if (response.code() == 200) {
+                    paid = true;
+                    espRus = response.body();
+                    wordCount = espRus.size();
 
-                button.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        check();
-                    }
-                });
+                    button.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            check();
+                        }
+                    });
+                } else {
+                    Call<List<Word>> call2 = apiInterface.doGetFreeWords();
+                    call2.enqueue(new Callback<List<Word>>() {
+                        @Override
+                        public void onResponse(Call<List<Word>> call, Response<List<Word>> response) {
+                            espRus = response.body();
+                            wordCount = espRus.size();
+
+                            button.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    check();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Word>> call, Throwable t) {
+                            call.cancel();
+                            t.printStackTrace();
+                        }
+                    });
+                }
             }
 
             @Override
@@ -69,6 +94,14 @@ public class MainActivity extends AppCompatActivity {
                 t.printStackTrace();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (counter == wordCount && counter != 0) {
+            stateDialog();
+        }
     }
 
     private void check() {
@@ -87,29 +120,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void stateDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Бесплатные слова закончились");
-        builder.setMessage("Свяжитесь с админом для оплаты подписки");
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                counter = 0;
-                showNextEsp();
-            }
-        });
-        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                counter = 0;
-                showNextEsp();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        if (!paid) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Бесплатные слова закончились");
+            builder.setMessage("Введите лицензионный ключ чтобы получить больше слов");
+            builder.setNegativeButton("Не хочу", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    counter = 0;
+                    showNextEsp();
+                }
+            });
+            builder.setPositiveButton("Ввести", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(MainActivity.this, LicenseActivity.class);
+                    MainActivity.this.startActivity(intent);
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        } else {
+            String message = ("sbmt_ctf_" + espRus.get(espRus.size()-1).esp).replaceAll(" ", "_");
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Поздравляем! Вот флаг:");
+            builder.setMessage(message);
+            builder.setPositiveButton("Ввести", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    Intent intent = new Intent(MainActivity.this, LicenseActivity.class);
+                    MainActivity.this.startActivity(intent);
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
     }
 
     private void showNextEsp() {
         wordView.setText(espRus.get(counter).esp);
-        statusView.setText("Слово " + String.valueOf(counter + 1) + "/" + String.valueOf(wordCount));
+        statusView.setText("Слово " + String.valueOf(counter + 1) + "/14");
     }
 }

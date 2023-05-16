@@ -9,12 +9,16 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
+import ru.ctf.kartochki2.pojo.LicenseKey;
 import ru.ctf.kartochki2.pojo.Word;
 
 public interface APIInterface {
     @GET("/api/getFreeWords")
-    Call<List<Word>> doGetWords();
+    Call<List<Word>> doGetFreeWords();
 
     @GET("/api/getPaidWords")
     Call<List<Word>> doGetPaidWords();
+
+    @POST("/api/activate")
+    Call<Void> doActivate(@Body LicenseKey licenseKey);
 }

@@ -25,7 +25,7 @@
             android:id="@+id/statusView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Слово 1/7"
+            android:text="Слово 1/14"
             android:textSize="25dp"
             />
     </LinearLayout>
