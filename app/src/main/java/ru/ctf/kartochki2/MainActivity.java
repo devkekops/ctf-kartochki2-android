@@ -20,7 +20,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import ru.ctf.kartochki2.pojo.WordList;
+import ru.ctf.kartochki2.pojo.Word;
 
 public class MainActivity extends AppCompatActivity {
     TextView labelView;
@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     TextView wordView;
     EditText inputText;
     Button button;
-    ArrayList<Pair<String, String>> espRus = new ArrayList<Pair<String, String>>();
+    List<Word> espRus;
     int counter = 0;
     int wordCount = 0;
     APIInterface apiInterface;
@@ -39,56 +39,40 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         apiInterface = APIClient.getClient().create(APIInterface.class);
-
-        espRus.add(new Pair<String, String>("chica", "девушка"));
-        espRus.add(new Pair<String, String>("padre", "отец"));
-        espRus.add(new Pair<String, String>("сuatro", "четыре"));
-        espRus.add(new Pair<String, String>("perro", "собака"));
-        espRus.add(new Pair<String, String>("hora", "час"));
-        espRus.add(new Pair<String, String>("raton", "мышь"));
-        espRus.add(new Pair<String, String>("trabajo", "работа"));
-        wordCount = espRus.size();
-
         labelView = (TextView)findViewById(R.id.labelView);
         statusView = (TextView)findViewById(R.id.statusView);
         wordView = (TextView)findViewById(R.id.wordView);
         inputText = (EditText)findViewById(R.id.inputText);
         button = (Button)findViewById(R.id.button);
 
-        showNextEsp();
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                check();
-            }
-        });
-
         /**
-         GET List Users
+         GET List Words
          **/
-        Call<WordList> call = apiInterface.doGetWords();
-        call.enqueue(new Callback<WordList>() {
+        Call<List<Word>> call = apiInterface.doGetWords();
+        call.enqueue(new Callback<List<Word>>() {
             @Override
-            public void onResponse(Call<WordList> call, Response<WordList> response) {
-                WordList wordList = response.body();
-                List<WordList.Word> words = wordList.words;
+            public void onResponse(Call<List<Word>> call, Response<List<Word>> response) {
+                espRus = response.body();
+                wordCount = espRus.size();
 
-                for (WordList.Word word : words) {
-                    Toast.makeText(MainActivity.this, "esp : " + word.esp + " rus: " + word.rus, Toast.LENGTH_LONG).show();
-                }
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        check();
+                    }
+                });
             }
 
             @Override
-            public void onFailure(Call<WordList> call, Throwable t) {
+            public void onFailure(Call<List<Word>> call, Throwable t) {
                 call.cancel();
+                t.printStackTrace();
             }
         });
     }
 
-
     private void check() {
-        if (inputText.getText().toString().equals(espRus.get(counter).second)) {
+        if (inputText.getText().toString().equals(espRus.get(counter).rus)) {
             Toast.makeText(MainActivity.this, "Правильно!", Toast.LENGTH_SHORT).show();
             counter++;
             if (counter == wordCount) {
@@ -104,8 +88,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void stateDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Поздравляем!");
-        builder.setMessage("Вы перевели все слова");
+        builder.setTitle("Бесплатные слова закончились");
+        builder.setMessage("Свяжитесь с админом для оплаты подписки");
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                counter = 0;
+                showNextEsp();
+            }
+        });
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -118,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showNextEsp() {
-        wordView.setText(espRus.get(counter).first);
+        wordView.setText(espRus.get(counter).esp);
         statusView.setText("Слово " + String.valueOf(counter + 1) + "/" + String.valueOf(wordCount));
     }
 }
