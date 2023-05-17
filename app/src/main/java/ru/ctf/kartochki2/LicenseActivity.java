@@ -32,7 +32,7 @@ public class LicenseActivity extends AppCompatActivity {
         inputText = (EditText)findViewById(R.id.inputText);
         button = (Button)findViewById(R.id.button);
 
-        apiInterface = APIClient.getClient().create(APIInterface.class);
+        apiInterface = APIClient.getClient(this).create(APIInterface.class);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override

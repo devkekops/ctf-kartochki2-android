@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         inputText = (EditText)findViewById(R.id.inputText);
         button = (Button)findViewById(R.id.button);
 
-        apiInterface = APIClient.getClient().create(APIInterface.class);
+        apiInterface = APIClient.getClient(this).create(APIInterface.class);
 
         Call<List<Word>> call1 = apiInterface.doGetPaidWords();
         call1.enqueue(new Callback<List<Word>>() {
@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
                     paid = true;
                     espRus = response.body();
                     wordCount = espRus.size();
+                    counter = 7;
+                    showNextEsp();
 
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -145,11 +147,11 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Поздравляем! Вот флаг:");
             builder.setMessage(message);
-            builder.setPositiveButton("Ввести", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("Ура!", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    Intent intent = new Intent(MainActivity.this, LicenseActivity.class);
-                    MainActivity.this.startActivity(intent);
+                    counter = 7;
+                    showNextEsp();
                 }
             });
             AlertDialog dialog = builder.create();
