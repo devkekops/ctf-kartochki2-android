@@ -56,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     paid = true;
                     espRus = response.body();
                     wordCount = espRus.size();
-                    counter = 7;
-                    showNextEsp();
+                    showWord();
 
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -70,8 +69,10 @@ public class MainActivity extends AppCompatActivity {
                     call2.enqueue(new Callback<List<Word>>() {
                         @Override
                         public void onResponse(Call<List<Word>> call, Response<List<Word>> response) {
+                            paid = false;
                             espRus = response.body();
                             wordCount = espRus.size();
+                            showWord();
 
                             button.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             if (counter == wordCount) {
                 stateDialog();
             } else {
-                showNextEsp();
+                showWord();
             }
         } else {
             Toast.makeText(MainActivity.this, "Неправильно!", Toast.LENGTH_SHORT).show();
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     counter = 0;
-                    showNextEsp();
+                    showWord();
                 }
             });
             builder.setPositiveButton("Ввести", new DialogInterface.OnClickListener() {
@@ -150,8 +151,8 @@ public class MainActivity extends AppCompatActivity {
             builder.setPositiveButton("Ура!", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    counter = 7;
-                    showNextEsp();
+                    counter = 0;
+                    showWord();
                 }
             });
             AlertDialog dialog = builder.create();
@@ -159,8 +160,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showNextEsp() {
+    private void showWord() {
+        int wordNumber = counter + 1;
+        if (paid) {
+            wordNumber = counter + 8;
+        }
         wordView.setText(espRus.get(counter).esp);
-        statusView.setText("Слово " + String.valueOf(counter + 1) + "/14");
+        statusView.setText("Слово " + String.valueOf(wordNumber) + "/14");
     }
 }
