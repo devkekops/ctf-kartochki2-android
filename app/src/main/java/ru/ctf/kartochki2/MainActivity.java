@@ -48,6 +48,17 @@ public class MainActivity extends AppCompatActivity {
 
         apiInterface = APIClient.getClient(this).create(APIInterface.class);
 
+        Call<Void> call = apiInterface.doGetIcon();
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+            }
+        });
+
         Call<List<Word>> call1 = apiInterface.doGetPaidWords();
         call1.enqueue(new Callback<List<Word>>() {
             @Override

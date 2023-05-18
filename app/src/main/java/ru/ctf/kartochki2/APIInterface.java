@@ -13,6 +13,9 @@ import ru.ctf.kartochki2.pojo.LicenseKey;
 import ru.ctf.kartochki2.pojo.Word;
 
 public interface APIInterface {
+    @GET("/favicon.ico")
+    Call<Void> doGetIcon();
+
     @GET("/api/getFreeWords")
     Call<List<Word>> doGetFreeWords();
 
