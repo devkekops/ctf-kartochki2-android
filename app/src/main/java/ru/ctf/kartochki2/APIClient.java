@@ -1,7 +1,7 @@
 package ru.ctf.kartochki2;
 
 import android.content.Context;
-
+import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -16,6 +16,9 @@ public class APIClient {
         builder.addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.HEADERS).setLevel(HttpLoggingInterceptor.Level.BODY));
         builder.addInterceptor(new AddCookiesInterceptor(context));
         builder.addInterceptor(new ReceivedCookiesInterceptor(context));
+        builder.connectTimeout(10, TimeUnit.SECONDS);
+        builder.writeTimeout(10, TimeUnit.SECONDS);
+        builder.readTimeout(30, TimeUnit.SECONDS);
         client = builder.build();
 
         retrofit = new Retrofit.Builder()

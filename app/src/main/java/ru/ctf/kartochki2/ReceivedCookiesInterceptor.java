@@ -1,10 +1,9 @@
 package ru.ctf.kartochki2;
 
 import android.content.Context;
-
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import java.io.IOException;
-import java.util.HashSet;
-
 import okhttp3.Interceptor;
 import okhttp3.Response;
 
@@ -19,11 +18,19 @@ public class ReceivedCookiesInterceptor implements Interceptor {
         Response originalResponse = chain.proceed(chain.request());
 
         if (!originalResponse.headers("Set-Cookie").isEmpty()) {
-            HashSet<String> cookies = new HashSet<>();
-            for (String header : originalResponse.headers("Set-Cookie")) {
-                cookies.add(header);
+
+            String cookie = new String();
+            for (String newCookie : originalResponse.headers("Set-Cookie")) {
+                if (newCookie.split("=")[0].equals("session")) {
+                    cookie = newCookie;
+                }
             }
-            PreferencesHelper.setCookies(context, cookies);
+
+            if (!cookie.isEmpty()) {
+                SharedPreferences.Editor memes = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                memes.putString("PREF_COOKIES", cookie);//.apply();
+                memes.commit();
+            }
         }
 
         return originalResponse;

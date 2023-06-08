@@ -3,21 +3,14 @@ package ru.ctf.kartochki2;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.util.Pair;
 import android.view.View;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -155,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         } else {
-            String message = ("sbmt_ctf_" + espRus.get(espRus.size()-1).esp).replaceAll(" ", "_");
+            String message = ("sbmt{" + espRus.get(espRus.size()-1).esp.replaceAll(" ", "_") + "}");
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Поздравляем! Вот флаг:");
             builder.setMessage(message);
